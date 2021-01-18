@@ -22,9 +22,8 @@ int main(void)
 
 void bubble_sort(int array[], int size) 
 {
-
-	for (int n = 0; n < size ; n++)
-	{	
+	for (int n = 0; n < size; n++)
+	{
 		for (int i = 0; i + 1 < size; i++)
 		{
 			if (array[i] > array[i + 1])	//a가 b보다 클경우
@@ -33,6 +32,7 @@ void bubble_sort(int array[], int size)
 				tmp = array[i];		//a값을 tmp로
 				array[i] = array[i + 1];	//b값을 a로
 				array[i + 1] = tmp;	//tmp값을 b로
+				//swap++;
 			}
 		}
 		printf("%i번째 : ", n + 1);
@@ -41,4 +41,5 @@ void bubble_sort(int array[], int size)
 			printf("%i", array[j]);
 		}
 		printf("\n");
+	}
 }
