@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdbool.h>
 void bubble_sort(int array[], int size);
 
 int main(void)
 {
-	int arr[] = { 1,2,3,4,5,6 };
+	int arr[] = { 4,3,6,2,1,5 };
 	printf("before : ");
 	for (int i = 0; i < 6; i++)
 	{
@@ -24,7 +24,7 @@ void bubble_sort(int array[], int size)
 {	
 	for (int n = 0; n < size ; n++)
 	{	
-		int swap = 0;
+		bool swap = false;
 		for (int i = 0; i + 1 < size; i++)
 		{	
 			if (array[i] > array[i + 1])	//a>b
@@ -33,10 +33,10 @@ void bubble_sort(int array[], int size)
 				tmp = array[i];		//a = tmp
 				array[i] = array[i + 1];	//b = a
 				array[i + 1] = tmp;	//tmp = b
-				swap++;
+				swap = true;
 			}
 		}
-		if (swap == 0) // 교환이 잃어나지 않았을 경우
+		if (swap == false) // 교환이 잃어나지 않았을 경우
 		{
 			break;	//for문 빠져나옴
 		}
