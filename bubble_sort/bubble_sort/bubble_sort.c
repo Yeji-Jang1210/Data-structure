@@ -1,10 +1,12 @@
 #include <stdio.h>
-#include <stdbool.h>
+#include <stdbool.h>	//bool type
+#include <time.h>	//시간함수 추가
 void bubble_sort(int array[], int size);
 
 int main(void)
 {
-	int arr[] = { 4,3,6,2,1,5 };
+	clock_t start = clock();	//시작
+	int arr[] = {1,2,3,4,5,6 };
 	printf("before : ");
 	for (int i = 0; i < 6; i++)
 	{
@@ -17,6 +19,9 @@ int main(void)
 	{
 		printf("%i", arr[i]);
 	}
+	printf("\n");
+	clock_t end = clock();	//종료
+	printf("Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);	//걸리는 시간
 
 }
 
@@ -24,8 +29,9 @@ void bubble_sort(int array[], int size)
 {	
 	for (int n = 0; n < size ; n++)
 	{	
+		int s_size = size;	//비교가 끝날때마다 마지막은 비교할 필요가 x 점점 줄어듬
 		bool swap = false;
-		for (int i = 0; i + 1 < size; i++)
+		for (int i = 0; i < s_size - 1 ; i++)
 		{	
 			if (array[i] > array[i + 1])	//a>b
 			{
@@ -46,5 +52,6 @@ void bubble_sort(int array[], int size)
 			printf("%i", array[j]);
 		}
 		printf("\n");
+		s_size--;
 	}
 }
