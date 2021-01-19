@@ -4,7 +4,7 @@ void bubble_sort(int array[], int size);
 
 int main(void)
 {
-	int arr[] = { 5,1,3,4,6,2 };
+	int arr[] = { 1,2,3,4,5,6 };
 	printf("before : ");
 	for (int i = 0; i < 6; i++)
 	{
@@ -21,19 +21,24 @@ int main(void)
 }
 
 void bubble_sort(int array[], int size) 
-{
-	for (int n = 0; n < size; n++)
-	{
+{	
+	for (int n = 0; n < size ; n++)
+	{	
+		int swap = 0;
 		for (int i = 0; i + 1 < size; i++)
-		{
+		{	
 			if (array[i] > array[i + 1])	//a가 b보다 클경우
 			{
 				int tmp = 0;
 				tmp = array[i];		//a값을 tmp로
 				array[i] = array[i + 1];	//b값을 a로
 				array[i + 1] = tmp;	//tmp값을 b로
-				//swap++;
+				swap++;
 			}
+		}
+		if (swap == 0) 
+		{
+			break;
 		}
 		printf("%i번째 : ", n + 1);
 		for (int j = 0; j < size; j++)
