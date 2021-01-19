@@ -27,18 +27,18 @@ void bubble_sort(int array[], int size)
 		int swap = 0;
 		for (int i = 0; i + 1 < size; i++)
 		{	
-			if (array[i] > array[i + 1])	//a가 b보다 클경우
+			if (array[i] > array[i + 1])	//a>b
 			{
 				int tmp = 0;
-				tmp = array[i];		//a값을 tmp로
-				array[i] = array[i + 1];	//b값을 a로
-				array[i + 1] = tmp;	//tmp값을 b로
+				tmp = array[i];		//a = tmp
+				array[i] = array[i + 1];	//b = a
+				array[i + 1] = tmp;	//tmp = b
 				swap++;
 			}
 		}
-		if (swap == 0) 
+		if (swap == 0) // 교환이 잃어나지 않았을 경우
 		{
-			break;
+			break;	//for문 빠져나옴
 		}
 		printf("%i번째 : ", n + 1);
 		for (int j = 0; j < size; j++)
