@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 void selection_sort(int array[], int size);
 
 int main(void) 
