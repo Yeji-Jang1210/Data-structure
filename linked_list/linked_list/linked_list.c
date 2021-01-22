@@ -18,8 +18,11 @@ int main(void)
 {
     node* head = create_node(); //head노드 주소를 가진 head포인터 만듬
     insert_node(&head, 0, 2);   //head의 주소를 넘겨줌
+    read_list(&head);
     insert_node(&head, 1, 3);
+    read_list(&head);
     insert_node(&head, 0, 5);
+    read_list(&head);
     insert_node(&head, 5, 1);
 
     printf("read node : %i\n",read_node(head, 0));
@@ -52,7 +55,7 @@ int insert_node(node **list, int index, int num)   //**list : headnode를 가르키�
     if (link->data == NULL)     //1.headNode일경우
     {
         link->data = num;
-        printf("index : %i, insert %i \n",i, link->data);
+        printf("index : %i, insert %i \n",index, link->data);
     }
     else {
         node* newNode = malloc(sizeof(node));   //새 노드 추가
@@ -82,7 +85,7 @@ int insert_node(node **list, int index, int num)   //**list : headnode를 가르키�
             }
             link->next = newNode;    //4.마지막에 삽입
         }
-        printf("index : %i, insert %i \n", i, newNode->data);
+        printf("index : %i, insert %i \n", index, newNode->data);
     }
 }   
 
