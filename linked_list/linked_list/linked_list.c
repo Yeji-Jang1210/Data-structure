@@ -11,7 +11,8 @@ node* create_node();
 int insert_node(node** list, int index, int num);
 int read_node(node* list,int index);
 int update_node(node* list, int index, int newNum);
-int delete_node(node* list , int index);
+int delete_node(node **list , int index);
+int read_list(node** list);
 
 int main(void) 
 {
@@ -22,8 +23,11 @@ int main(void)
     insert_node(&head, 5, 1);
 
     printf("read node : %i\n",read_node(head, 0));
+    read_list(&head);
     update_node(head, 0, 7);
-    delete_node(head, 2);
+    read_list(&head);
+    delete_node(&head, 0);
+    read_list(&head);
     free(head);
 }
 
@@ -40,15 +44,15 @@ node* create_node()     //headNode 생성
     return newNode;         //새 노드의 주소를 return
 }
 
-int insert_node(node **list, int index, int num)   //**list : head주소의값(newNode주소)을 가르키는 포인터
+int insert_node(node **list, int index, int num)   //**list : headnode를 가르키는 주소의 주소
 {
-    node *link = *list; //link포인터에 list값 복사 (link는 newNode주소를 가짐)
+    node *link = *list; //link포인터에 list값 복사 (link는 headnode주소를 가짐)
     int i = 0;
 
     if (link->data == NULL)     //1.headNode일경우
     {
         link->data = num;
-        printf("insert %i \n", link->data);
+        printf("index : %i, insert %i \n",i, link->data);
     }
     else {
         node* newNode = malloc(sizeof(node));   //새 노드 추가
@@ -63,7 +67,7 @@ int insert_node(node **list, int index, int num)   //**list : head주소의값(newNo
         if (index == 0)     //2.제일 첫번째 삽입
         {
             newNode->next = link;
-            *list = newNode; //새로만든 노드의 주소값을 가짐
+            *list = newNode; //새로만든 노드로 주소값 변경
         }
         else
         {
@@ -78,7 +82,7 @@ int insert_node(node **list, int index, int num)   //**list : head주소의값(newNo
             }
             link->next = newNode;    //4.마지막에 삽입
         }
-        printf("insert %i \n", newNode->data);
+        printf("index : %i, insert %i \n", i, newNode->data);
     }
 }   
 
@@ -109,7 +113,7 @@ int update_node(node* list, int index, int newNum)
         update_Node = update_Node->next;
         i++;
     }
-    if (update_Node->next != NULL) {
+    if (update_Node->next == NULL) {
         printf("update하려는 인덱스가 리스트보다 큼");
         return 1;
     }
@@ -118,15 +122,15 @@ int update_node(node* list, int index, int newNum)
     printf("after : %i \n", update_Node->data);
 }
 
-int delete_node(node* list, int index) 
+int delete_node(node **list, int index) 
 {
-    node *delete = list;
-    node *link = list;
+    node *delete = *list;
+    node *link = *list;
     int i = 0;
-    if (!index)     //삭제하려는 노드의 인덱스가 0이 참이면 -> list의 주소일경우
+    if (index == 0)     //삭제하려는 노드의 인덱스가 0이면 -> list의 주소일경우
     {   
-        link = link->next;  //list는 다음주소를 가리킴
-        printf("delete : %i", delete->data);
+        *list = link->next;  //list는 다음주소를 가리킴
+        printf("delete : %i \n", delete->data);
         free(delete);    
     }
     else {
@@ -144,5 +148,26 @@ int delete_node(node* list, int index)
         link->next = delete->next;
         printf("delete %i \n", delete->data);
         free(delete);
+    }
+}
+
+int read_list(node** list) 
+{
+    node *read = *list;
+    if (*&read == NULL) 
+    {
+        printf("연결리스트가 존재하지 않습니다");
+        return 1;
+    }
+    else 
+    {
+        printf("read all node : ");
+        while (read->data != NULL && read->next != NULL)
+        {
+            printf("%i ", read->data);
+            read = read->next;
+        }
+        printf("%i ", read->data);
+        printf("\n");
     }
 }
