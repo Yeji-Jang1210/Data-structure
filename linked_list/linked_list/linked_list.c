@@ -7,50 +7,79 @@ typedef struct node
     struct node *next;
 }node;
 
-node* insert_node(node* list, int num);
+node* create_node();
+void insert_node(node** list, int index, int num);
 int read_node(node* list,int index);
 int update_node(node* list, int index, int newNum);
-void delete_node(node* list , int index);
+int delete_node(node* list , int index);
 
 int main(void) 
 {
-    node *list = malloc(sizeof(node));
-    list = NULL;    //head node
+    node* head = create_node(); //head노드 주소를 가진 head포인터 만듬
+    insert_node(&head, 0, 2);   //head의 주소를 넘겨줌
+    insert_node(&head, 1, 3);
+    insert_node(&head, 0, 5);
+    insert_node(&head, 5, 1);
 
-    list = insert_node(list, 2);
-    list = insert_node(list, 3);
-    list = insert_node(list, 5);
-
-    printf("read node : %i\n",read_node(list, 0));
-    printf("update node : %i\n",update_node(list, 0, 7));
-    delete_node(list, 2);
-    free(list);
+    printf("read node : %i\n",read_node(head, 0));
+    update_node(head, 0, 7);
+    delete_node(head, 2);
+    free(head);
 }
 
-node* insert_node(node *list, int num) 
+node* create_node()     //headNode 생성
 {
-    node* n = malloc(sizeof(node)); //새로운 노드 만듬
-    if (n == NULL)
+    node *newNode = malloc(sizeof(node));
+    if (newNode == NULL)
     {
-        return 1;
+        printf("메모리 할당 실패");
+        return NULL;
     }
-    n->data = num;     //노드에 값 저장
-    n->next = NULL;     //새 노드의 다음 주소는 없으므로 null
+    newNode->data = NULL;     
+    newNode->next = NULL;     //새 노드의 다음 주소는 없으므로 null
+    return newNode;         //새 노드의 주소를 return
+}
 
-    if (list == NULL)   //노드 연결
+void insert_node(node **list, int index, int num)   //**list : head주소의값(newNode주소)을 가르키는 포인터
+{
+    node *link = *list; //link포인터에 list값 복사 (link는 newNode주소를 가짐)
+    int i = 0;
+
+    if (link->data == NULL)     //1.headNode일경우
     {
-        list = n;
+        link->data = num;
+        printf("insert %i \n", link->data);
     }
-    else 
-    {
-        node* tail_node = list;
-        while (tail_node->next != NULL)
+    else {
+        node* newNode = malloc(sizeof(node));   //새 노드 추가
+        if (newNode == NULL)
         {
-            tail_node = list->next;
+            printf("메모리 할당 실패");
+            return NULL;
         }
-        tail_node->next = n;
+        newNode->data = num;
+        newNode->next = NULL;     //새 노드의 다음 주소는 없으므로 null
+
+        if (index == 0)     //2.제일 첫번째 삽입
+        {
+            newNode->next = link;
+            *list = newNode; //새로만든 노드의 주소값을 가짐
+        }
+        else
+        {
+            while (i != index - 1 && link->next != NULL)
+            {
+                link = link->next;
+                i++;
+            }
+            if (link->next != NULL)    //3.중간에 삽입
+            {
+                newNode->next = link->next;
+            }
+            link->next = newNode;    //4.마지막에 삽입
+        }
+        printf("insert %i \n", newNode->data);
     }
-    return list;
 }   
 
 int read_node(node* list,int index) 
@@ -61,6 +90,11 @@ int read_node(node* list,int index)
     {
         readNode = readNode->next;
         i++;
+    }
+    if (readNode->next == NULL) 
+    {
+        printf("읽으려는 인덱스가 리스트보다 큼\n");
+        return 1;
     }
     printf("read node index : %i, node : %i \n", i, readNode->data);
     return readNode->data;
@@ -75,13 +109,16 @@ int update_node(node* list, int index, int newNum)
         update_Node = update_Node->next;
         i++;
     }
+    if (update_Node->next != NULL) {
+        printf("update하려는 인덱스가 리스트보다 큼");
+        return 1;
+    }
     printf("update node before : %i, ", update_Node->data);
     update_Node->data = newNum;
     printf("after : %i \n", update_Node->data);
-    return update_Node->data;
 }
 
-void delete_node(node* list, int index) 
+int delete_node(node* list, int index) 
 {
     node *delete = list;
     node *link = list;
@@ -102,7 +139,7 @@ void delete_node(node* list, int index)
         if (delete == NULL) 
         {
             printf("삭제하려는 인덱스가 리스트보다 큼");
-            return NULL;
+            return 1;
         }
         link->next = delete->next;
         printf("delete %i \n", delete->data);
