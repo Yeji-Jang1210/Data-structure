@@ -8,7 +8,7 @@ typedef struct node
 }node;
 
 node* create_node();
-void insert_node(node** list, int index, int num);
+int insert_node(node** list, int index, int num);
 int read_node(node* list,int index);
 int update_node(node* list, int index, int newNum);
 int delete_node(node* list , int index);
@@ -40,7 +40,7 @@ node* create_node()     //headNode 생성
     return newNode;         //새 노드의 주소를 return
 }
 
-void insert_node(node **list, int index, int num)   //**list : head주소의값(newNode주소)을 가르키는 포인터
+int insert_node(node **list, int index, int num)   //**list : head주소의값(newNode주소)을 가르키는 포인터
 {
     node *link = *list; //link포인터에 list값 복사 (link는 newNode주소를 가짐)
     int i = 0;
@@ -55,7 +55,7 @@ void insert_node(node **list, int index, int num)   //**list : head주소의값(newN
         if (newNode == NULL)
         {
             printf("메모리 할당 실패");
-            return NULL;
+            return 1;
         }
         newNode->data = num;
         newNode->next = NULL;     //새 노드의 다음 주소는 없으므로 null
