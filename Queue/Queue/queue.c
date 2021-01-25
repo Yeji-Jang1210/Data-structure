@@ -22,7 +22,7 @@ int main(void)
 
 node* create_node()
 {
-    node* headNode = (node*)malloc(sizeof(int));
+    node* headNode = malloc(sizeof(node));
     if (headNode == NULL)
     {
         printf("연결리스트 생성에 오류가 생겼습니다.");
@@ -42,7 +42,7 @@ int enqueue(node** list, int num)
     }
     else
     {
-        node* newNode = (node*)malloc(sizeof(int));
+        node* newNode = malloc(sizeof(node));
         if (newNode == NULL)
         {
             printf("새 노드를 삽입하는데 오류가 생겼습니다.");
