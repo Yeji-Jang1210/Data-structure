@@ -13,8 +13,8 @@ int dequeue(node** list);
 int main(void)
 {
     node* head = create_node();
-    enqueue(&head, 3);
-    enqueue(&head, 4);
+    printf("enqueue : %i\n", enqueue(&head, 3));
+    printf("enqueue : %i\n", enqueue(&head, 4));
     printf("return : %i \n", dequeue(&head));
     printf("return : %i \n", dequeue(&head));
     free(head);
@@ -30,6 +30,8 @@ node* create_node()
     }
     headNode->data = NULL;
     headNode->next = NULL;
+
+    return headNode;
 }
 int enqueue(node** list, int num)
 {
@@ -38,7 +40,7 @@ int enqueue(node** list, int num)
     {
         link->data = num;
         link->next = NULL;
-        printf("enqueue : %i\n", link->data);
+        return link->data;
     }
     else
     {
@@ -57,7 +59,7 @@ int enqueue(node** list, int num)
             link = link->next;
         }
         link->next = insert;
-        printf("enqueue : %i\n", insert->data);
+        return insert->data;
     }
 }
 int dequeue(node** list)
