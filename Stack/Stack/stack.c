@@ -14,9 +14,9 @@ int read_size(node** list);
 int main(void) 
 {
     node* head = create_node();
-    push(&head, 3);
-    push(&head, 4);
-    push(&head, 5);
+    printf("push : %i\n",push(&head, 3));
+    printf("push : %i\n", push(&head, 4));
+    printf("push : %i\n", push(&head, 5));
     printf("pop : %i\n", pop(&head));
     printf("size : %i\n", read_size(&head));
     printf("pop : %i\n", pop(&head));
@@ -32,6 +32,7 @@ node* create_node()
     }
     newNode->data = NULL;
     newNode->next = NULL;
+    return newNode;
 }
 int push(node** list, int num) 
 {
@@ -40,7 +41,7 @@ int push(node** list, int num)
     {
         old_node->data = num;
         old_node->next = NULL;
-        printf("push : %i\n", old_node->data);
+        return old_node->data;
     }
     else {
         node* newNode = (node*)malloc(sizeof(node));
@@ -57,7 +58,7 @@ int push(node** list, int num)
             old_node = old_node->next;
         }
         old_node->next = newNode;
-        printf("push : %i\n", newNode->data);
+        return newNode->data;
     }
 }
 int pop(node** list) 
