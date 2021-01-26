@@ -1,25 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct node {
     int data;
     struct node* next;
 }node;
-
 node* create_node();
-int push(node** list, int num);
-int pop(node** list);
+bool push(node** list, int num);
+bool pop(node** list,int *a);
 int read_size(node** list);
 
 int main(void) 
 {
     node* head = create_node();
-    printf("push : %i\n",push(&head, 3));
-    printf("push : %i\n", push(&head, 4));
-    printf("push : %i\n", push(&head, 5));
-    printf("pop : %i\n", pop(&head));
-    printf("size : %i\n", read_size(&head));
-    printf("pop : %i\n", pop(&head));
+    int a = 0;
+    int b = 0;
+    if (push(&head, 1) == false) 
+    {
+        printf("is error\n");
+        free(head);
+        return -1;
+    }
+    push(&head, 3);
+    
+    pop(&head, &a);
+    pop(&head, &b);
+    printf("pop : %i %i\n", a,b);
+
+    if (pop(&head, &a) == false) 
+    {
+        printf("is error\n");
+        free(head);
+        return -1;
+    }
     free(head);
 }
 node* create_node() 
@@ -27,28 +41,29 @@ node* create_node()
     node* newNode = (node*)malloc(sizeof(node));
     if (newNode == NULL) 
     {
-        printf("헤더노드 생성 실패");
+        printf("헤더노드 생성 실패\n");
         return NULL;
     }
     newNode->data = NULL;
     newNode->next = NULL;
     return newNode;
 }
-int push(node** list, int num) 
+bool push(node** list, int num) 
 {
     node* old_node = *list;
     if (old_node->data == NULL) 
     {
         old_node->data = num;
         old_node->next = NULL;
-        return old_node->data;
+        printf("push : %i\n", old_node->data);
     }
-    else {
+    else 
+    {
         node* newNode = (node*)malloc(sizeof(node));
         if (newNode == NULL)
         {
-            printf("새 노드를 생성 실패");
-            return 1;
+            printf("새 노드를 생성 실패\n");
+            return false;
         }
         newNode->data = num;
         newNode->next = NULL;
@@ -58,20 +73,22 @@ int push(node** list, int num)
             old_node = old_node->next;
         }
         old_node->next = newNode;
-        return newNode->data;
+        printf("push : %i\n", newNode->data);
     }
+    return true;
 }
-int pop(node** list) 
+bool pop(node** list,int *a) 
 {
     node* last_node = *list;
     node* pop_node = *list;
     int pop_num = 0;
-    if (last_node == NULL) 
+    if (last_node->data == NULL && pop_node->data == NULL)
     {
-        printf("반환할 값이 없습니다. : stack underflow");
-        return 1;
+        printf("반환할 값이 없습니다. : stack underflow\n");
+        return false;
     }
-    else {
+    else 
+    {
         if (pop_node->next == NULL)
         {
             pop_num = pop_node->data;
@@ -90,14 +107,15 @@ int pop(node** list)
             if (pop_node == NULL) 
             {
                 printf("pop_node : NULL\n");
-                return 1;
+                return false;
             }
             pop_num = pop_node->data;
             last_node->next = NULL;
             free(pop_node);
         }
-        return pop_num;
+        *a = pop_num;
     }
+    return true;
 }
 int read_size(node** list) 
 {
