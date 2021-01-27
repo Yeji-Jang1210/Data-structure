@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct node {
+typedef struct node 
+{
     int data;
     struct node* next;
 }node;
