@@ -16,19 +16,12 @@ int main(void)
     node* head = create_node();
     int a = 0;
     int b = 0;
-    int c[10];
     int d = 0;
-    push(&head, 3);
-    push(&head, 4);
-    printf("size : %i\n", read_size(&head)+1);
     if (push(&head, 3) == false) 
     {
         printf("is error\n");
-        for (int i = 0; i < read_size(&head); i++) 
-        {
-            printf("return : %i", pop(&head, c[i]));
-        }
     }
+    push(&head, 4);
     pop(&head, &a);
     pop(&head, &b);
     printf("pop : %i %i\n", a,b);
