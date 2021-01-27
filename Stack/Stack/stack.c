@@ -17,10 +17,14 @@ int main(void)
     int a = 0;
     int b = 0;
     int d = 0;
+<<<<<<< HEAD
     if (push(&head, 3) == false) 
     {
         printf("is error\n");
     }
+=======
+    push(&head, 3);
+>>>>>>> master
     push(&head, 4);
     pop(&head, &a);
     pop(&head, &b);
