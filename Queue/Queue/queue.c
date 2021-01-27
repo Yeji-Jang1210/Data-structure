@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct node {
+typedef struct node 
+{
     int data;
     struct node* next;
 }node;
@@ -16,14 +17,19 @@ int main(void)
     node* head = create_node();
     int num1 = 0;
     int num2 = 0;
-    enqueue(&head, 3);
+    if (enqueue(&head, 3) == false) 
+    {
+        printf("is error\n");
+    }
+    
     enqueue(&head, 4);
     dequeue(&head, &num1);
     dequeue(&head, &num2);
     printf("return : %i \n", num1);
     printf("return : %i \n", num2);
 
-    if (dequeue(&head, &num2) == false) {
+    if (dequeue(&head, &num2) == false) 
+    {
         printf("is error");
         free(head);
         return -1;
