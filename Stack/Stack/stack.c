@@ -16,24 +16,33 @@ int main(void)
     node* head = create_node();
     int a = 0;
     int b = 0;
-    if (push(&head, 1) == false) 
+    int c[10];
+    int d = 0;
+    push(&head, 3);
+    push(&head, 4);
+    printf("size : %i\n", read_size(&head)+1);
+    if (push(&head, 3) == false) 
     {
         printf("is error\n");
-        free(head);
-        return -1;
+        for (int i = 0; i < read_size(&head); i++) 
+        {
+            printf("return : %i", pop(&head, c[i]));
+        }
     }
-    push(&head, 3);
-    
     pop(&head, &a);
     pop(&head, &b);
     printf("pop : %i %i\n", a,b);
 
-    if (pop(&head, &a) == false) 
+   if (pop(&head, &d) == false) 
     {
         printf("is error\n");
         free(head);
         return -1;
     }
+   else
+   {
+       printf("pop : %i", d);
+   }
     free(head);
 }
 node* create_node() 
