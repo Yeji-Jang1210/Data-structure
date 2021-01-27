@@ -1,22 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-typedef struct node {
+typedef struct node 
+{
     int data;
     struct node* next;
 }node;
 
 node* create_node();
-int enqueue(node** list, int num);
-int dequeue(node** list);
+bool enqueue(node** list, int num);
+bool dequeue(node** list, int *num);
 
 int main(void)
 {
     node* head = create_node();
-    enqueue(&head, 3);
+    int num1 = 0;
+    int num2 = 0;
+    if (enqueue(&head, 3) == false) 
+    {
+        printf("is error\n");
+    }
+    
     enqueue(&head, 4);
-    printf("return : %i \n", dequeue(&head));
-    printf("return : %i \n", dequeue(&head));
+    dequeue(&head, &num1);
+    dequeue(&head, &num2);
+    printf("return : %i \n", num1);
+    printf("return : %i \n", num2);
+
+    if (dequeue(&head, &num2) == false) 
+    {
+        printf("is error");
+        free(head);
+        return -1;
+    }
     free(head);
 }
 
@@ -25,28 +42,30 @@ node* create_node()
     node* headNode = malloc(sizeof(node));
     if (headNode == NULL)
     {
-        printf("연결리스트 생성에 오류가 생겼습니다.");
+        printf("연결리스트 생성에 오류가 생겼습니다.\n");
         return NULL;
     }
     headNode->data = NULL;
     headNode->next = NULL;
+
+    return headNode;
 }
-int enqueue(node** list, int num)
+bool enqueue(node** list, int num)
 {
     node* link = *list;
     if (link->data == NULL) //headNode에 아무것도 연결되어있지 않을 경우
     {
         link->data = num;
         link->next = NULL;
-        printf("enqueue : %i\n", link->data);
+        printf("enqueue : %i \n",link->data);
     }
     else
     {
         node* newNode = malloc(sizeof(node));
         if (newNode == NULL)
         {
-            printf("새 노드를 삽입하는데 오류가 생겼습니다.");
-            return 1;
+            printf("새 노드를 삽입하는데 오류가 생겼습니다.\n");
+            return false;
         }
         newNode->data = num;
         newNode->next = NULL;
@@ -57,17 +76,18 @@ int enqueue(node** list, int num)
             link = link->next;
         }
         link->next = insert;
-        printf("enqueue : %i\n", insert->data);
+        printf("enqueue: %i\n",insert->data);
     }
+    return true;
 }
-int dequeue(node** list)
+bool dequeue(node** list, int *num)
 {
     node* front = *list;    //front가 될 노드
     int tmp = 0; //반환될 노드의 값 저장
-    if (front->data == NULL)
+    if (front->data == NULL && front->next == NULL)
     {
-        printf("반환할 노드가 없습니다.(Buffer UnderFlow)");
-        return 1;
+        printf("반환할 노드가 없습니다.(Buffer UnderFlow)\n");
+        return false;
     }
 
     tmp = front->data;
@@ -80,5 +100,6 @@ int dequeue(node** list)
         *list = front->next;
         free(front);
     }
-    return tmp;
+    *num = tmp;
+    return true;
 }
