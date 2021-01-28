@@ -7,11 +7,17 @@ int** matMul(int** a, int** b,int a_row, int a_col, int b_row, int b_col);
 int** insertArray(FILE* fname, int *row, int *col);
 void printArray(int** array);
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    
+    if (argc > 3) 
+    {
+        printf("두개의 텍스트파일을 입력하세요");
+        return -1;
+    }
 
-    FILE* a_fp = fopen("a.txt","r");    //읽기모드로 open
-    FILE* b_fp = fopen("b.txt", "r");
+    FILE* a_fp = fopen(argv[1],"r");    //읽기모드로 open
+    FILE* b_fp = fopen(argv[2], "r");
     int a_row = 0;
     int a_col = 0;
     int b_row = 0;
