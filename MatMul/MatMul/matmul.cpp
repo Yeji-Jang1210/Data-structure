@@ -3,9 +3,9 @@
 #include <stdbool.h>
 #include <malloc.h>
 
-int** matMul(int** a, int** b,int a_row, int a_col, int b_row, int b_col);
-int** insertArray(FILE* fname, int *row, int *col);
-void printArray(int** array);
+int* matMul(int* a, int* b,int a_row, int a_col, int b_row, int b_col, int *ab_row, int *ab_col);
+int* insertArray(FILE* fname, int *row, int *col);
+void printArray(int* array, int row, int col);
 
 int main(int argc, char* argv[])
 {
@@ -22,6 +22,8 @@ int main(int argc, char* argv[])
     int a_col = 0;
     int b_row = 0;
     int b_col = 0;
+    int ab_row = 0;
+    int ab_col = 0;
 
     if (a_fp == NULL && b_fp == NULL)
     {
@@ -31,8 +33,8 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    int** a = insertArray(a_fp, &a_row, &a_col);
-    int** b = insertArray(b_fp, &b_row, &b_col);
+    int* a = insertArray(a_fp, &a_row, &a_col);
+    int* b = insertArray(b_fp, &b_row, &b_col);
 
     if (a == NULL && b == NULL) 
     {
@@ -42,47 +44,32 @@ int main(int argc, char* argv[])
     fclose(a_fp);   //close file
     fclose(b_fp);
 
-    int** ab = matMul(a, b, a_row, a_col, b_row, b_col);
+
+    int* ab = matMul(a, b, a_row, a_col, b_row, b_col,&ab_row,&ab_col);
     if (ab == NULL) 
     {
         printf("matMul function error");
     }
-    printArray(a);
-    printArray(b);
-    printArray(ab);
+    printArray(a,a_row,a_col);
+    printArray(b,b_row,b_col);
+    printArray(ab,ab_row,ab_col);
 
-    for (int i = 0; i < a_row; i++)
-    {
-        free(a[i]);
-    }
+
     free(a);    
-    for (int i = 0; i < b_row; i++)
-    {
-        free(b[i]);
-    }
     free(b);    
-    for (int i = 0; i < a_row; i++)
-    {
-        free(ab[i]);
-    }
     free(ab);   
 }
-int** matMul(int** a,int** b,int a_row,int a_col, int b_row, int b_col)
+int* matMul(int* a,int* b,int a_row,int a_col, int b_row, int b_col,int *ab_row,int *ab_col)
 {
-    int** matArr = (int**)malloc(sizeof(int*) * a_row);  //두 행렬의 곱을 담을 이차원 배열 만듬
+    int size = a_row * b_col;
+    *ab_row = a_row;
+    *ab_col = b_col;
+    
+    int* matArr = (int*)malloc(sizeof(int) * size);  //두 행렬의 곱을 담을 이차원 배열 만듬
     if (matArr == NULL)
     {
         printf("메모리 할당 실패");
         return NULL;
-    }
-
-    for (int i = 0; i < b_col; i++) 
-    {
-        matArr[i] = (int*)malloc(sizeof(int) * b_col);
-        if (matArr[i] == NULL) 
-        {
-            return NULL;
-        }
     }
 
     if (a_col != b_row)
@@ -92,29 +79,31 @@ int** matMul(int** a,int** b,int a_row,int a_col, int b_row, int b_col)
     }
     else 
     {
-        for (int i = 0; i < a_row; i++)
+        int s = 0;
+        for (int i = 0, r = 0; i < a_row; i++, r = r + a_col)
         {
             for (int j = 0; j < b_col; j++)
             {
                 int sum = 0;
-                for (int k = 0, mul = 0; k < a_col; k++)
+                for (int k = 0, mul = 0, l = 0; k < b_row; k++, l = l + b_col)
                 {
-                    mul = a[i][k] * b[k][j];
+                    mul = a[k + r] * b[j + l];
                     sum = sum + mul;
                 }
                 //배열 값 저장
-                matArr[i][j] = sum;
+                matArr[s] = sum;
+                s++;
             }
         }
     }
     return matArr;
 }
-int** insertArray(FILE* fname,int *row,int* col)
+int* insertArray(FILE* fname,int *row,int* col)
 {
     fscanf(fname, "%d ", row);
     fscanf(fname, "%d ", col);
-
-    int **array = (int**)malloc(sizeof(int*) * (*row));
+    int size = *row * *col;
+    int *array = (int*)malloc(sizeof(int) * size);
     if (array == NULL)
     {
         printf("메모리 할당 실패");
@@ -122,34 +111,21 @@ int** insertArray(FILE* fname,int *row,int* col)
     }
     else
     {
-        for (int i = 0; i < *row; i++)     //2차원 배열로 할당
+        for (int i = 0; i < size; i++)      //값 대입
         {
-            array[i] = (int*)malloc(sizeof(int) * (*col));
-            if (array[i] == NULL)
-            {
-                return NULL;
-            }
-        }
-        for (int i = 0; i < *row; i++)      //값 대입
-        {
-            for (int j = 0; j < *col; j++)
-            {
-                fscanf(fname, "%d", &array[i][j]);
-            }
+                fscanf(fname, "%d", &array[i]);
         }
     }
     return array;
 }
-void printArray(int** array) 
+void printArray(int* array, int row, int col) 
 {
-    int row = _msize(array)/sizeof(int*);
-    int col = _msize(array[0])/sizeof(int);
     printf("-----Print Matrix-----\n");
-    for (int i = 0; i < row; i++) 
+    for (int i = 0,r = 0; i < row; i++,r=r+col) 
     {
         for (int j = 0; j < col; j++) 
         {
-            printf("%i ", array[i][j]);
+            printf("%i ", array[r+j]);
         }
         printf("\n");
     }
