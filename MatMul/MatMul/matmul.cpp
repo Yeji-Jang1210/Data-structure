@@ -1,10 +1,11 @@
 #pragma warning(disable : 4996)
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
+#include <malloc.h>
 
-bool matMul(int** a, int** b,int a_row, int a_col, int b_row, int b_col);
+int** matMul(int** a, int** b,int a_row, int a_col, int b_row, int b_col);
 int** insertArray(FILE* fname, int *row, int *col);
+void printArray(int** array);
 
 int main(void)
 {
@@ -29,37 +30,62 @@ int main(void)
 
     if (a == NULL && b == NULL) 
     {
-        printf("is error");
+        printf("insertArray function error");
     }
 
     fclose(a_fp);   //close file
     fclose(b_fp);
 
-    if (matMul(a, b, a_row, a_col, b_row, b_col) == false)
+    int** ab = matMul(a, b, a_row, a_col, b_row, b_col);
+    if (ab == NULL) 
     {
-        printf("is error");
+        printf("matMul function error");
     }
+    printArray(a);
+    printArray(b);
+    printArray(ab);
+
     for (int i = 0; i < a_row; i++)
     {
         free(a[i]);
     }
-    free(a);    //error
+    free(a);    
     for (int i = 0; i < b_row; i++)
     {
         free(b[i]);
     }
-    free(b);    //error
+    free(b);    
+    for (int i = 0; i < a_row; i++)
+    {
+        free(ab[i]);
+    }
+    free(ab);   
 }
-bool matMul(int** a,int** b,int a_row,int a_col, int b_row, int b_col)
+int** matMul(int** a,int** b,int a_row,int a_col, int b_row, int b_col)
 {
+    int** matArr = (int**)malloc(sizeof(int*) * a_row);  //두 행렬의 곱을 담을 이차원 배열 만듬
+    if (matArr == NULL)
+    {
+        printf("메모리 할당 실패");
+        return NULL;
+    }
+
+    for (int i = 0; i < b_col; i++) 
+    {
+        matArr[i] = (int*)malloc(sizeof(int) * b_col);
+        if (matArr[i] == NULL) 
+        {
+            return NULL;
+        }
+    }
+
     if (a_col != b_row)
     {
         printf("행렬곱의 조건에 맞지않는 행렬입니다.");
-        return false;
+        return NULL;
     }
     else 
     {
-        printf("-----Matrix Multiplication-----\n");
         for (int i = 0; i < a_row; i++)
         {
             for (int j = 0; j < b_col; j++)
@@ -70,15 +96,17 @@ bool matMul(int** a,int** b,int a_row,int a_col, int b_row, int b_col)
                     mul = a[i][k] * b[k][j];
                     sum = sum + mul;
                 }
-                printf("%i ", sum);
+                //배열 값 저장
+                matArr[i][j] = sum;
             }
-            printf("\n");
         }
     }
-    return true;
+    return matArr;
 }
 int** insertArray(FILE* fname,int *row,int* col)
 {
+    fscanf(fname, "%d ", row);
+    fscanf(fname, "%d ", col);
 
     int **array = (int**)malloc(sizeof(int*) * (*row));
     if (array == NULL)
@@ -88,13 +116,14 @@ int** insertArray(FILE* fname,int *row,int* col)
     }
     else
     {
-        fscanf(fname, "%d ", row);
-        fscanf(fname, "%d ", col);
         for (int i = 0; i < *row; i++)     //2차원 배열로 할당
         {
             array[i] = (int*)malloc(sizeof(int) * (*col));
+            if (array[i] == NULL)
+            {
+                return NULL;
+            }
         }
-
         for (int i = 0; i < *row; i++)      //값 대입
         {
             for (int j = 0; j < *col; j++)
@@ -104,4 +133,19 @@ int** insertArray(FILE* fname,int *row,int* col)
         }
     }
     return array;
+}
+void printArray(int** array) 
+{
+    int row = _msize(array)/sizeof(int*);
+    int col = _msize(array[0])/sizeof(int);
+    printf("-----Print Matrix-----\n");
+    for (int i = 0; i < row; i++) 
+    {
+        for (int j = 0; j < col; j++) 
+        {
+            printf("%i ", array[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
