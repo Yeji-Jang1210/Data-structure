@@ -14,51 +14,90 @@ matrix* matMul(matrix* a, matrix* b);
 matrix* insertArray(FILE* fname);
 void printArray(matrix* mat);
 void freeMatrix(matrix* mat);
+void freeTxtFile(FILE** txt, int size);
 
 int main(int argc, char* argv[])
 {
-    
-    if (argc > 3) 
+    int size = argc - 1;
+    FILE** tfile = (FILE**)malloc(sizeof(FILE*) * size);
+    if (tfile == NULL)
     {
-        printf("두개의 텍스트파일을 입력하세요");
+        printf("is error");
         return -1;
     }
-
-    FILE* a_fp = fopen(argv[1],"r");    //읽기모드로 open
-    FILE* b_fp = fopen(argv[2], "r");
-
-    if (a_fp == NULL && b_fp == NULL)
+    for (int i = 0; i < size; i++)  //파일을 순차적으로 읽어 tfile[]에 저장
     {
-        printf("파일을 읽을 수 없음");
-        fclose(a_fp);
-        fclose(b_fp);
-        return -1;
+        tfile[i] = fopen(argv[i + 1], "r");
+        if (tfile[i] == NULL)
+        {
+            printf("파일을 읽을 수 없음");
+            freeTxtFile(tfile,size);
+            return -1;
+        }
     }
 
-    matrix* a = insertArray(a_fp);
-    matrix* b = insertArray(b_fp);
-
-    fclose(a_fp);
-    fclose(b_fp);
-
-    if (a == NULL && b == NULL) 
+    matrix** array = (matrix**)malloc(sizeof(matrix*) * size);
+    if (array == NULL)
     {
-        printf("insertArray function error");
+        free(array);
+    }
+    for (int i = 0; i < size; i++)  //읽은 파일을 array로 배열을만들고 tfile은 메모리 해제
+    {
+        array[i] = insertArray(tfile[i]);
+    }
+    freeTxtFile(tfile, size);
+    printf("---Before Matrix Multiplication---\n");
+    for (int i = 0; i < size; i++) 
+    {
+        printArray(array[i]);
     }
 
-    matrix* ab = matMul(a, b);
-    if (ab == NULL) 
+    matrix** matArr = (matrix**)malloc(sizeof(matrix*) * size - 1);     //행렬곱 시작
+    if (matArr == NULL) 
     {
-        printf("matMul function error");
+        printf("메모리 할당 실패\n");
+         for (int i = 0; i < size; i++)
+    {
+        freeMatrix(array[i]);
     }
-    printArray(a);
-    printArray(b);
-    printArray(ab);
+    free(array);
+    }
+    for (int i = 0; i < size-1; i++) 
+    {   
+        if (i == 0) 
+        {
+            matArr[i] = matMul(array[i], array[i + 1]);
+        }
+        else 
+        {
+            matArr[i] = matMul(matArr[i-1], array[i + 1]);
+            if (matArr[i] == NULL)
+            {
+                printf("matMul function error\n");
+            }
+        }
+    }
 
-    freeMatrix(a);
-    freeMatrix(b);
-    freeMatrix(ab);
+    printf("---After Matrix Multiplication---\n");
+    for (int i = 0; i < size-1; i++)
+    {
+        printArray(matArr[i]);
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        freeMatrix(array[i]);
+    }
+    free(array);
+
+    for (int i = 0; i < size; i++)
+    {
+        freeMatrix(matArr[i]);
+    }
+    free(matArr);
+
 }
+
 matrix* matMul(matrix* a,matrix* b)
 {
     int row = a->row;
@@ -145,7 +184,7 @@ matrix* insertArray(FILE* fname)
 }
 void printArray(matrix* mat) 
 {
-    printf("-----Print Matrix-----\n");
+    printf("Print Matrix\n");
     for (int i = 0,r = 0; i < mat->row; i++,r=r+mat->col) 
     {
         for (int j = 0; j < mat->col; j++) 
@@ -160,4 +199,13 @@ void freeMatrix(matrix* mat)
 {
     free(mat->arr);
     free(mat);
+}
+void freeTxtFile(FILE** txt,int size) 
+{
+    for (int i = 0; i < size; i++)
+    {
+        fclose(txt[i]);
+        free(txt[i]);
+    }
+    free(txt);
 }
