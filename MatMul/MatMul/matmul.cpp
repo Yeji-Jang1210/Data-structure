@@ -36,8 +36,16 @@ int main(int argc, char* argv[])
         }
     }
 
+<<<<<<< HEAD
     matrix** array = (matrix**)malloc(sizeof(matrix*) * size);
     if (array == NULL)
+=======
+<<<<<<< Updated upstream
+    FILE* a_fp = fopen(argv[1],"r");    //읽기모드로 open
+    FILE* b_fp = fopen(argv[2], "r");
+
+    if (a_fp == NULL && b_fp == NULL)
+>>>>>>> edit_source
     {
         free(array);
     }
@@ -96,6 +104,30 @@ int main(int argc, char* argv[])
     }
     free(matArr);
 
+<<<<<<< HEAD
+=======
+    free(a->arr);
+    free(a);  
+    free(b->arr);
+    free(b);  
+    free(ab->arr);
+    free(ab);   
+=======
+    printf("---Before Matrix Multiplication---\n");
+    matrix* matArr = insertArray(tfile[0]);
+    printArray(matArr);
+    for (int i = 1; i < size; i++)
+    {
+        matrix* arr = insertArray(tfile[i]);
+        printArray(arr);
+        matArr = matMul(matArr, arr);
+        freeMatrix(arr);
+    }
+    printf("---After Matrix Multiplication---\n");
+    printArray(matArr);
+    freeMatrix(matArr);
+>>>>>>> Stashed changes
+>>>>>>> edit_source
 }
 
 matrix* matMul(matrix* a,matrix* b)
