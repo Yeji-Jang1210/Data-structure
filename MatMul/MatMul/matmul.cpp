@@ -3,7 +3,11 @@
 #include <stdbool.h>
 #include <malloc.h>
 
+<<<<<<< HEAD
 struct matrix 
+=======
+struct matrix
+>>>>>>> edit_source
 {
     int* arr;
     int row;
@@ -18,6 +22,7 @@ void freeTxtFile(FILE** txt, int size);
 
 int main(int argc, char* argv[])
 {
+<<<<<<< HEAD
     int size = argc - 1;
     FILE** tfile = (FILE**)malloc(sizeof(FILE*) * size);
     if (tfile == NULL)
@@ -113,6 +118,31 @@ int main(int argc, char* argv[])
     free(ab->arr);
     free(ab);   
 =======
+=======
+    if (argc < 3) 
+    {
+        printf("행렬곱은 최소 두개의 파일이 있어야 합니다.");
+        return -1;
+    }
+    int size = argc - 1;
+    FILE** tfile = (FILE**)malloc(sizeof(FILE*) * size);
+    if (tfile == NULL)
+    {
+        printf("is error");
+        return -1;
+    }
+    for (int i = 0; i < size; i++)  //파일을 순차적으로 읽어 tfile[]에 저장
+    {
+        tfile[i] = fopen(argv[i + 1], "r");
+        if (tfile[i] == NULL)
+        {
+            printf("파일을 읽을 수 없음");
+            freeTxtFile(tfile, size);
+            return -1;
+        }
+    }
+
+>>>>>>> edit_source
     printf("---Before Matrix Multiplication---\n");
     matrix* matArr = insertArray(tfile[0]);
     printArray(matArr);
@@ -126,16 +156,23 @@ int main(int argc, char* argv[])
     printf("---After Matrix Multiplication---\n");
     printArray(matArr);
     freeMatrix(matArr);
+<<<<<<< HEAD
 >>>>>>> Stashed changes
 >>>>>>> edit_source
 }
 
 matrix* matMul(matrix* a,matrix* b)
+=======
+
+}
+
+matrix* matMul(matrix* a, matrix* b)
+>>>>>>> edit_source
 {
     int row = a->row;
     int col = b->col;
     int size = a->row * b->col;
-    
+
     matrix* matArr = (matrix*)malloc(sizeof(matrix) * size);  //두 행렬의 곱을 담을 이차원 배열 만듬
     if (matArr == NULL)
     {
@@ -150,10 +187,10 @@ matrix* matMul(matrix* a,matrix* b)
         free(matArr);
         return NULL;
     }
-    else 
+    else
     {
-        int* arr = (int*)malloc(sizeof(int)*size);
-        if (arr == NULL) 
+        int* arr = (int*)malloc(sizeof(int) * size);
+        if (arr == NULL)
         {
             printf("메모리 할당 실패");
             return NULL;
@@ -171,7 +208,7 @@ matrix* matMul(matrix* a,matrix* b)
                     sum = sum + mul;
                 }
                 //배열 값 저장
-                *(arr+s) = sum;
+                *(arr + s) = sum;
                 s++;
             }
         }
@@ -187,7 +224,7 @@ matrix* insertArray(FILE* fname)
     fscanf(fname, "%d ", &col);
     int size = row * col;
 
-    matrix *mat = (matrix*)malloc(sizeof(matrix));
+    matrix* mat = (matrix*)malloc(sizeof(matrix));
     if (mat == NULL)
     {
         printf("메모리 할당 실패");
@@ -195,7 +232,7 @@ matrix* insertArray(FILE* fname)
     }
     else
     {
-        int* arr = (int*)malloc(sizeof(int)*size);
+        int* arr = (int*)malloc(sizeof(int) * size);
         if (arr == NULL)
         {
             printf("메모리 할당 실패");
@@ -214,25 +251,37 @@ matrix* insertArray(FILE* fname)
     mat->col = col;
     return mat;
 }
-void printArray(matrix* mat) 
+void printArray(matrix* mat)
 {
     printf("Print Matrix\n");
+<<<<<<< HEAD
     for (int i = 0,r = 0; i < mat->row; i++,r=r+mat->col) 
+=======
+    for (int i = 0, r = 0; i < mat->row; i++, r = r + mat->col)
+>>>>>>> edit_source
     {
-        for (int j = 0; j < mat->col; j++) 
+        for (int j = 0; j < mat->col; j++)
         {
-            printf("%i ", mat->arr[r+j]);
+            printf("%i ", mat->arr[r + j]);
         }
         printf("\n");
     }
     printf("\n");
 }
+<<<<<<< HEAD
 void freeMatrix(matrix* mat) 
+=======
+void freeMatrix(matrix* mat)
+>>>>>>> edit_source
 {
     free(mat->arr);
     free(mat);
 }
+<<<<<<< HEAD
 void freeTxtFile(FILE** txt,int size) 
+=======
+void freeTxtFile(FILE** txt, int size)
+>>>>>>> edit_source
 {
     for (int i = 0; i < size; i++)
     {
