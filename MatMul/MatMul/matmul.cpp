@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <malloc.h>
 
-typedef struct matrix 
+struct matrix
 {
     int* arr;
     int row;
@@ -12,57 +12,35 @@ typedef struct matrix
 
 matrix* matMul(matrix* a, matrix* b);
 matrix* insertArray(FILE* fname);
-void printArray(matrix* array);
+void printArray(matrix* mat);
+void freeMatrix(matrix* mat);
+void freeTxtFile(FILE** txt, int size);
 
 int main(int argc, char* argv[])
 {
-    
-    if (argc > 3) 
+    if (argc < 3) 
     {
-        printf("두개의 텍스트파일을 입력하세요");
+        printf("행렬곱은 최소 두개의 파일이 있어야 합니다.");
         return -1;
     }
-
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    FILE* a_fp = fopen(argv[1],"r");    //읽기모드로 open
-    FILE* b_fp = fopen(argv[2], "r");
-
-    if (a_fp == NULL && b_fp == NULL)
+    int size = argc - 1;
+    FILE** tfile = (FILE**)malloc(sizeof(FILE*) * size);
+    if (tfile == NULL)
     {
-        printf("파일을 읽을 수 없음");
-        fclose(a_fp);
-        fclose(b_fp);
+        printf("is error");
         return -1;
     }
-
-    matrix* a = insertArray(a_fp);
-    matrix* b = insertArray(b_fp);
-
-    fclose(a_fp);
-    fclose(b_fp);
-
-    if (a == NULL && b == NULL) 
+    for (int i = 0; i < size; i++)  //파일을 순차적으로 읽어 tfile[]에 저장
     {
-        printf("insertArray function error");
+        tfile[i] = fopen(argv[i + 1], "r");
+        if (tfile[i] == NULL)
+        {
+            printf("파일을 읽을 수 없음");
+            freeTxtFile(tfile, size);
+            return -1;
+        }
     }
 
-    matrix* ab = matMul(a, b);
-    if (ab == NULL) 
-    {
-        printf("matMul function error");
-    }
-    printArray(a);
-    printArray(b);
-    printArray(ab);
-
-    free(a->arr);
-    free(a);  
-    free(b->arr);
-    free(b);  
-    free(ab->arr);
-    free(ab);   
-=======
     printf("---Before Matrix Multiplication---\n");
     matrix* matArr = insertArray(tfile[0]);
     printArray(matArr);
@@ -76,29 +54,15 @@ int main(int argc, char* argv[])
     printf("---After Matrix Multiplication---\n");
     printArray(matArr);
     freeMatrix(matArr);
->>>>>>> Stashed changes
-=======
-    printf("---Before Matrix Multiplication---\n");
-    matrix* matArr = insertArray(tfile[0]);
-    printArray(matArr);
-    for (int i = 1; i < size; i++)
-    {
-        matrix* arr = insertArray(tfile[i]);
-        printArray(arr);
-        matArr = matMul(matArr, arr);
-        freeMatrix(arr);
-    }
-    printf("---After Matrix Multiplication---\n");
-    printArray(matArr);
-    freeMatrix(matArr);
->>>>>>> Stashed changes
+
 }
-matrix* matMul(matrix* a,matrix* b)
+
+matrix* matMul(matrix* a, matrix* b)
 {
     int row = a->row;
     int col = b->col;
     int size = a->row * b->col;
-    
+
     matrix* matArr = (matrix*)malloc(sizeof(matrix) * size);  //두 행렬의 곱을 담을 이차원 배열 만듬
     if (matArr == NULL)
     {
@@ -113,10 +77,10 @@ matrix* matMul(matrix* a,matrix* b)
         free(matArr);
         return NULL;
     }
-    else 
+    else
     {
-        int* arr = (int*)malloc(sizeof(int)*size);
-        if (arr == NULL) 
+        int* arr = (int*)malloc(sizeof(int) * size);
+        if (arr == NULL)
         {
             printf("메모리 할당 실패");
             return NULL;
@@ -134,7 +98,7 @@ matrix* matMul(matrix* a,matrix* b)
                     sum = sum + mul;
                 }
                 //배열 값 저장
-                *(arr+s) = sum;
+                *(arr + s) = sum;
                 s++;
             }
         }
@@ -150,7 +114,7 @@ matrix* insertArray(FILE* fname)
     fscanf(fname, "%d ", &col);
     int size = row * col;
 
-    matrix *mat = (matrix*)malloc(sizeof(matrix));
+    matrix* mat = (matrix*)malloc(sizeof(matrix));
     if (mat == NULL)
     {
         printf("메모리 할당 실패");
@@ -158,7 +122,7 @@ matrix* insertArray(FILE* fname)
     }
     else
     {
-        int* arr = (int*)malloc(sizeof(int)*size);
+        int* arr = (int*)malloc(sizeof(int) * size);
         if (arr == NULL)
         {
             printf("메모리 할당 실패");
@@ -177,16 +141,30 @@ matrix* insertArray(FILE* fname)
     mat->col = col;
     return mat;
 }
-void printArray(matrix* mat) 
+void printArray(matrix* mat)
 {
-    printf("-----Print Matrix-----\n");
-    for (int i = 0,r = 0; i < mat->row; i++,r=r+mat->col) 
+    printf("Print Matrix\n");
+    for (int i = 0, r = 0; i < mat->row; i++, r = r + mat->col)
     {
-        for (int j = 0; j < mat->col; j++) 
+        for (int j = 0; j < mat->col; j++)
         {
-            printf("%i ", mat->arr[r+j]);
+            printf("%i ", mat->arr[r + j]);
         }
         printf("\n");
     }
     printf("\n");
+}
+void freeMatrix(matrix* mat)
+{
+    free(mat->arr);
+    free(mat);
+}
+void freeTxtFile(FILE** txt, int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        fclose(txt[i]);
+        free(txt[i]);
+    }
+    free(txt);
 }
