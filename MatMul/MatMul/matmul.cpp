@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <malloc.h>
 
-typedef struct matrix 
+struct matrix 
 {
     int* arr;
     int row;
@@ -12,7 +12,8 @@ typedef struct matrix
 
 matrix* matMul(matrix* a, matrix* b);
 matrix* insertArray(FILE* fname);
-void printArray(matrix* array);
+void printArray(matrix* mat);
+void freeMatrix(matrix* mat);
 
 int main(int argc, char* argv[])
 {
@@ -54,12 +55,9 @@ int main(int argc, char* argv[])
     printArray(b);
     printArray(ab);
 
-    free(a->arr);
-    free(a);  
-    free(b->arr);
-    free(b);  
-    free(ab->arr);
-    free(ab);   
+    freeMatrix(a);
+    freeMatrix(b);
+    freeMatrix(ab);
 }
 matrix* matMul(matrix* a,matrix* b)
 {
@@ -157,4 +155,9 @@ void printArray(matrix* mat)
         printf("\n");
     }
     printf("\n");
+}
+void freeMatrix(matrix* mat) 
+{
+    free(mat->arr);
+    free(mat);
 }
