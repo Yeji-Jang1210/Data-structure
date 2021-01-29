@@ -3,9 +3,16 @@
 #include <stdbool.h>
 #include <malloc.h>
 
-int* matMul(int* a, int* b,int a_row, int a_col, int b_row, int b_col, int *ab_row, int *ab_col);
-int* insertArray(FILE* fname, int *row, int *col);
-void printArray(int* array, int row, int col);
+typedef struct matrix 
+{
+    int* arr;
+    int row;
+    int col;
+};
+
+matrix* matMul(matrix* a, matrix* b);
+matrix* insertArray(FILE* fname);
+void printArray(matrix* array);
 
 int main(int argc, char* argv[])
 {
@@ -18,12 +25,6 @@ int main(int argc, char* argv[])
 
     FILE* a_fp = fopen(argv[1],"r");    //읽기모드로 open
     FILE* b_fp = fopen(argv[2], "r");
-    int a_row = 0;
-    int a_col = 0;
-    int b_row = 0;
-    int b_col = 0;
-    int ab_row = 0;
-    int ab_col = 0;
 
     if (a_fp == NULL && b_fp == NULL)
     {
@@ -33,99 +34,125 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    int* a = insertArray(a_fp, &a_row, &a_col);
-    int* b = insertArray(b_fp, &b_row, &b_col);
+    matrix* a = insertArray(a_fp);
+    matrix* b = insertArray(b_fp);
+
+    fclose(a_fp);
+    fclose(b_fp);
 
     if (a == NULL && b == NULL) 
     {
         printf("insertArray function error");
     }
 
-    fclose(a_fp);   //close file
-    fclose(b_fp);
-
-
-    int* ab = matMul(a, b, a_row, a_col, b_row, b_col,&ab_row,&ab_col);
+    matrix* ab = matMul(a, b);
     if (ab == NULL) 
     {
         printf("matMul function error");
     }
-    printArray(a,a_row,a_col);
-    printArray(b,b_row,b_col);
-    printArray(ab,ab_row,ab_col);
+    printArray(a);
+    printArray(b);
+    printArray(ab);
 
-
-    free(a);    
-    free(b);    
+    free(a->arr);
+    free(a);  
+    free(b->arr);
+    free(b);  
+    free(ab->arr);
     free(ab);   
 }
-int* matMul(int* a,int* b,int a_row,int a_col, int b_row, int b_col,int *ab_row,int *ab_col)
+matrix* matMul(matrix* a,matrix* b)
 {
-    int size = a_row * b_col;
-    *ab_row = a_row;
-    *ab_col = b_col;
+    int row = a->row;
+    int col = b->col;
+    int size = a->row * b->col;
     
-    int* matArr = (int*)malloc(sizeof(int) * size);  //두 행렬의 곱을 담을 이차원 배열 만듬
+    matrix* matArr = (matrix*)malloc(sizeof(matrix) * size);  //두 행렬의 곱을 담을 이차원 배열 만듬
     if (matArr == NULL)
     {
         printf("메모리 할당 실패");
         return NULL;
     }
-
-    if (a_col != b_row)
+    matArr->row = row;
+    matArr->col = col;
+    if (a->col != b->row)
     {
         printf("행렬곱의 조건에 맞지않는 행렬입니다.");
+        free(matArr);
         return NULL;
     }
     else 
     {
-        int s = 0;
-        for (int i = 0, r = 0; i < a_row; i++, r = r + a_col)
+        int* arr = (int*)malloc(sizeof(int)*size);
+        if (arr == NULL) 
         {
-            for (int j = 0; j < b_col; j++)
+            printf("메모리 할당 실패");
+            return NULL;
+        }
+
+        int s = 0;
+        for (int i = 0, r = 0; i < row; i++, r = r + a->col)
+        {
+            for (int j = 0; j < col; j++)
             {
                 int sum = 0;
-                for (int k = 0, mul = 0, l = 0; k < b_row; k++, l = l + b_col)
+                for (int k = 0, mul = 0, l = 0; k < b->row; k++, l = l + col)
                 {
-                    mul = a[k + r] * b[j + l];
+                    mul = a->arr[k + r] * b->arr[j + l];
                     sum = sum + mul;
                 }
                 //배열 값 저장
-                matArr[s] = sum;
+                *(arr+s) = sum;
                 s++;
             }
         }
+        matArr->arr = arr;
     }
     return matArr;
 }
-int* insertArray(FILE* fname,int *row,int* col)
+matrix* insertArray(FILE* fname)
 {
-    fscanf(fname, "%d ", row);
-    fscanf(fname, "%d ", col);
-    int size = *row * *col;
-    int *array = (int*)malloc(sizeof(int) * size);
-    if (array == NULL)
+    int row = 0;
+    int col = 0;
+    fscanf(fname, "%d ", &row);
+    fscanf(fname, "%d ", &col);
+    int size = row * col;
+
+    matrix *mat = (matrix*)malloc(sizeof(matrix));
+    if (mat == NULL)
     {
         printf("메모리 할당 실패");
         return NULL;
     }
     else
     {
-        for (int i = 0; i < size; i++)      //값 대입
+        int* arr = (int*)malloc(sizeof(int)*size);
+        if (arr == NULL)
         {
-                fscanf(fname, "%d", &array[i]);
+            printf("메모리 할당 실패");
+            return NULL;
+        }
+        else
+        {
+            for (int i = 0; i < size; i++)      //값 대입
+            {
+                fscanf(fname, "%d", &arr[i]);
+            }
+            mat->arr = arr;
         }
     }
-    return array;
+    mat->row = row;
+    mat->col = col;
+    return mat;
 }
-void printArray(int* array, int row, int col) 
+void printArray(matrix* mat) 
 {
     printf("-----Print Matrix-----\n");
-    for (int i = 0,r = 0; i < row; i++,r=r+col) 
+    for (int i = 0,r = 0; i < mat->row; i++,r=r+mat->col) 
     {
-        for (int j = 0; j < col; j++) 
+        for (int j = 0; j < mat->col; j++) 
         {
-            printf("%i ", array[r+j]);
+            printf("%i ", mat->arr[r+j]);
         }
         printf("\n");
     }
