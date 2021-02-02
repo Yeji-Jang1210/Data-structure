@@ -33,27 +33,31 @@ int main(int argc, char* argv[])
     row = img.rows;
     col = img.cols;
 
-    int pixelColor = img.at<uchar>(0, 0);   //uchar : grayscale이라 0-255까지 필요하기 때문
-    printf("rows : %dpx\ncols : %dpx\nsize : %dpx\n", img.rows, img.cols,img.rows * img.cols);  //행,열,사이즈
-    
-    Mat img2 = Mat(row,col,img.type());
+    printf("---img---\nrows : %dpx\ncols : %dpx\nsize : %dpx\n", img.rows, img.cols,img.rows * img.cols);  //행,열,사이즈
+    Mat img3 = Mat(row,col,img.type());
     int r = 0;
     int c = 0;
+    int baseX = col / 2;
+    int baseY = row / 2;
+
     for (int i = 0; i < row; i++)
     {
-
         for (int j = 0; j < col; j++)
         {
-            c = cos(radian) * j + -sin(radian) * i; //열 
-            r = sin(radian) * j + cos(radian) * i;  //행
-            img2.at<uchar>(r,c) = img.at<uchar>(i, j);  //error
-            //printf("r : %i c : %i\n", r, c);
+            c = cos(radian) * (j - baseX) + -sin(radian) * (i - baseY) + baseY; //열 
+            r = sin(radian) * (j - baseX) + cos(radian) * (i - baseY) + baseY;  //행
+            if ((c >= 0 && c < col) && (r >= 0 && r < row))
+            {
+
+                img3.at<uchar>(i, j) = img.at<uchar>(r, c);
+            }
+            else
+            {
+                img3.at<uchar>(i, j) = 0;
+            }
         }
-       
     }
-
-    imshow("img copy", img2);
+    printf("---img3---\nrows : %dpx\ncols : %dpx\nsize : %dpx\n", img3.rows, img3.cols, img3.rows * img3.cols);  //행,열,사이즈
+    imshow("rotate img", img3);
     waitKey();
-    waitKey();
-
 }
