@@ -46,7 +46,7 @@ void rotationImg(Mat img, int degree)
     {
         for (int j = 0; j < col; j++)
         {
-            c = cos(radian) * (j - baseX) + -sin(radian) * (i - baseY) + baseY; //열 
+            c = cos(radian) * (j - baseX) + -sin(radian) * (i - baseY) + baseX; //열 
             r = sin(radian) * (j - baseX) + cos(radian) * (i - baseY) + baseY;  //행
             if ((c >= 0 && c < col) && (r >= 0 && r < row))
             {
@@ -59,10 +59,11 @@ void rotationImg(Mat img, int degree)
             }
         }
     }
+
     printf("---img---\nrows : %dpx\ncols : %dpx\nsize : %dpx\n", img.rows, img.cols, img.rows * img.cols);  //행,열,사이즈
     imshow("before rotation", img);//imshow(디스플레이 이름,mat형식의 이미지 표시)
-    printf("---img---\nrows : %dpx\ncols : %dpx\nsize : %dpx\n", img3.rows, img3.cols, img3.rows * img3.cols);
-    imshow("rotate img", img3);      
+    printf("---rotation img---\nrows : %dpx\ncols : %dpx\nsize : %dpx\n", img3.rows, img3.cols, img3.rows * img3.cols);
+    imshow("rotation img", img3);      
     waitKey();
 }
 int estimateValue(Mat img, double row, double col)
@@ -89,8 +90,8 @@ int estimateValue(Mat img, double row, double col)
         maxC = c + 1;
     }
 
-    double rowColor = img.at<uchar>(r, c) * (1.0 - (row - r)) + img.at<uchar>(maxR, c) * (row - r);  //색과 거리는 반비례
-    double nextRowColor = img.at<uchar>(r, maxC) * (1.0 - (row - r)) + img.at<uchar>(maxR, maxC) * (row - r);
-    int estimateColor = rowColor * (1.0 - (col - c)) + nextRowColor * (col - c);
+    double colColor = img.at<uchar>(r, c) * (1.0 - (row - r)) + img.at<uchar>(maxR, c) * (row - r);  //색과 거리는 반비례
+    double nextColColor = img.at<uchar>(r, maxC) * (1.0 - (row - r)) + img.at<uchar>(maxR, maxC) * (row - r);
+    int estimateColor = colColor * (1.0 - (col - c)) + nextColColor * (col - c);
     return estimateColor;
 }
