@@ -10,6 +10,8 @@
 using namespace cv;
 int estimateValue(Mat img, double row, double col);
 void rotationImg(Mat img,int degree);
+void returnSize(double radian, int x, int y, int* sizeX, int* sizeY, int baseX, int baseY);
+int addRotationImgSize(int dot1, int dot2, int dot3, int dot4);
 
 int main(int argc, char* argv[]) 
 {
@@ -27,30 +29,35 @@ int main(int argc, char* argv[])
         printf("파일을 읽을 수 없음");
         return 1;
     }
-
     rotationImg(img, degree);
 }
 
 void rotationImg(Mat img, int degree) 
 {
-    int row = img.rows;
-    int col = img.cols;
     double radian = degree * M_PI / 180;
+    int y = img.rows;
+    int x = img.cols;
+    int baseX = x / 2;
+    int baseY = y / 2;
+    int sizeX = 0;
+    int sizeY = 0;
+
+    returnSize(radian, x,  y, &sizeX, &sizeY, baseX, baseY);
+    Mat img3 = Mat(sizeY, sizeX,img.type());
+
+    int reBaseX = sizeX / 2;
+    int reBaseY = sizeY / 2;
     double r = 0;  //double
     double c = 0;  //double
-    int baseX = col / 2;
-    int baseY = row / 2;
-    Mat img3 = Mat(row, col, img.type());
 
-    for (int i = 0; i < row; i++)
+    for (int i = 0; i < sizeY; i++)
     {
-        for (int j = 0; j < col; j++)
+        for (int j = 0; j < sizeX; j++)
         {
-            c = cos(radian) * (j - baseX) + -sin(radian) * (i - baseY) + baseX; //열 
-            r = sin(radian) * (j - baseX) + cos(radian) * (i - baseY) + baseY;  //행
-            if ((c >= 0 && c < col) && (r >= 0 && r < row))
+            c = cos(radian) * (j - reBaseX) + -sin(radian) * (i - reBaseY) + baseX; //열 
+            r = sin(radian) * (j - reBaseX) + cos(radian) * (i - reBaseY) + baseY;  //행
+            if ((c >= 0 && c < x) && (r >= 0 && r < y))
             {
-
                 img3.at<uchar>(i, j) = estimateValue(img, r, c);
             }
             else
@@ -94,4 +101,46 @@ int estimateValue(Mat img, double row, double col)
     double nextColColor = img.at<uchar>(r, maxC) * (1.0 - (row - r)) + img.at<uchar>(maxR, maxC) * (row - r);
     int estimateColor = colColor * (1.0 - (col - c)) + nextColColor * (col - c);
     return estimateColor;
+}
+int addRotationImgSize(int dot1, int dot2, int dot3, int dot4) 
+{
+    int dotArr[4] = { dot1, dot2, dot3, dot4 };
+    int min = dotArr[0];
+    int max = dotArr[0];
+    int tmp = 0;
+    for (int i = 1; i < 4; i++) 
+    {
+        if (dotArr[i] > max)
+        {
+            max = dotArr[i]; 
+        }
+        if (dotArr[i] < min) 
+        {
+            min = dotArr[i];
+        }
+    }
+    int size = max-min;
+    return size;
+}
+void returnSize(double radian, int x,int y, int *sizeX, int *sizeY,int baseX,int baseY) 
+{
+
+    //0,0
+    int c_dot1 = cos(radian) * (0 - baseX) + sin(radian) * (0 - baseY) + baseX;
+    int r_dot1 = -sin(radian) * (0 - baseX) + cos(radian) * (0 - baseY) + baseY;
+
+    //0,x-1
+    int c_dot2 = cos(radian) * ((x - 1) - baseX) + sin(radian) * (0 - baseY) + baseX;
+    int r_dot2 = -sin(radian) * ((x - 1) - baseX) + cos(radian) * (0 - baseY) + baseY;
+
+    //y-1,0
+    int c_dot3 = cos(radian) * (0 - baseX) + sin(radian) * ((y - 1) - baseY) + baseX;
+    int r_dot3 = -sin(radian) * (0 - baseX) + cos(radian) * ((y - 1) - baseY) + baseY;
+
+    //y-1,x-1
+    int c_dot4 = cos(radian) * ((x - 1) - baseX) + sin(radian) * ((y - 1) - baseY) + baseX;
+    int r_dot4 = -sin(radian) * ((x - 1) - baseX) + cos(radian) * ((y - 1) - baseY) + baseY;
+
+    *sizeX = addRotationImgSize(c_dot1, c_dot2, c_dot3, c_dot4);
+    *sizeY = addRotationImgSize(r_dot1, r_dot2, r_dot3, r_dot4);
 }
