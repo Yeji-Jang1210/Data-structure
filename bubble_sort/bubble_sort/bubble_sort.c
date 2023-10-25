@@ -1,57 +1,84 @@
 #include <stdio.h>
-#include <stdbool.h>	//bool type
-#include <time.h>	//½Ã°£ÇÔ¼ö Ãß°¡
+#include <stdbool.h>   //bool type
+#include <time.h>   //ì‹œê°„í•¨ìˆ˜ ì¶”ê°€
 void bubble_sort(int array[], int size);
 
 int main(void)
 {
-	clock_t start = clock();	//½ÃÀÛ
-	int arr[] = {1,2,3,4,5,6 };
-	printf("before : ");
-	for (int i = 0; i < 6; i++)
-	{
-		printf("%i", arr[i]);
-	}
-	printf("\n");
-	bubble_sort(arr, 6);
-	printf("\nbubble sort:");
-	for (int i = 0; i < 6; i++) 
-	{
-		printf("%i", arr[i]);
-	}
-	printf("\n");
-	clock_t end = clock();	//Á¾·á
-	printf("Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);	//°É¸®´Â ½Ã°£
+   clock_t start = clock();   //ì‹œì‘
+   int arr[] = {5, 3, 7, 2, 4, 1};
+   printf("ì…ë ¥ ê°’ : ");
+   for (int i = 0; i < 6; i++)
+   {
+      if(i == 5){
+         printf("%i", arr[i]);
+      }
+      else {
+         printf("%i,", arr[i]);
+      }
+   }
+
+   printf("\n");
+   bubble_sort(arr, 6);
+   printf("\nbubble sort:");
+   for (int i = 0; i < 6; i++) 
+   {
+      printf("%i", arr[i]);
+   }
+   printf("\n");
+   clock_t end = clock();   //ì¢…ë£Œ
+   printf("Time: %lf\n", (double)(end - start) / CLOCKS_PER_SEC);   //ê±¸ë¦¬ëŠ” ì‹œê°„
 
 }
 
 void bubble_sort(int array[], int size) 
-{	
-	for (int n = 0; n < size ; n++)
-	{	
-		int s_size = size;	//ºñ±³°¡ ³¡³¯¶§¸¶´Ù ¸¶Áö¸·Àº ºñ±³ÇÒ ÇÊ¿ä°¡ x Á¡Á¡ ÁÙ¾îµë
-		bool swap = false;
-		for (int i = 0; i < s_size - 1 ; i++)
-		{	
-			if (array[i] > array[i + 1])	//a>b
-			{
-				int tmp = 0;
-				tmp = array[i];		//a = tmp
-				array[i] = array[i + 1];	//b = a
-				array[i + 1] = tmp;	//tmp = b
-				swap = true;
-			}
-		}
-		if (swap == false) // ±³È¯ÀÌ ÀÒ¾î³ªÁö ¾Ê¾ÒÀ» °æ¿ì
-		{
-			break;	//for¹® ºüÁ®³ª¿È
-		}
-		printf("%i¹øÂ° : ", n + 1);
-		for (int j = 0; j < size; j++)
-		{
-			printf("%i", array[j]);
-		}
-		printf("\n");
-		s_size--;
-	}
+{   
+   for (int n = 0; n < size ; n++)
+   {   
+      int s_size = size;   //ë¹„êµê°€ ëë‚ ë•Œë§ˆë‹¤ ë§ˆì§€ë§‰ì€ ë¹„êµí•  í•„ìš”ê°€ x ì ì  ì¤„ì–´ë“¬
+      bool swap = false;
+      for (int i = 0; i < s_size - 1 ; i++)
+      {   
+         if (array[i] > array[i + 1])   //a>b
+         {
+            int tmp = 0;
+            tmp = array[i];      //a = tmp
+            array[i] = array[i + 1];   //b = a
+            array[i + 1] = tmp;   //tmp = b
+            swap = true;
+
+            for (int j = 0; j < size; j++)
+            {
+               if (j != size - 1) {
+                  printf("%i->", array[j]);
+               }
+               else {
+                  printf("%i", array[j]);
+               }
+
+            }
+            printf("\n");
+         }
+      }
+      if (swap == false) // êµí™˜ì´ ìƒì–´ë‚˜ì§€ ì•Šì•˜ì„ ê²½ìš°
+      {
+         break;   //forë¬¸ ë¹ ì ¸ë‚˜ì˜´
+      }
+
+      printf("%ië²ˆì§¸ ê²°ê³¼: ", n + 1);
+      for (int j = 0; j < size; j++)
+      {
+         if (j != size - 1) {
+            printf("%i->", array[j]);
+         }
+         else {
+            printf("%i", array[j]);
+         }
+         
+      }
+      printf("\n");
+      printf("\n");
+
+      s_size--;
+   }
 }
